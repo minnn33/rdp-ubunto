@@ -5,18 +5,27 @@ on: [workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Install Desktop Environment & VNC
         run: |
           sudo apt update
           sudo apt install xfce4 xfce4-goodies tightvncserver git -y
+
+          # إعداد كلمة المرور من Secret
+          mkdir -p ~/.vnc
+          echo "${{ secrets.VNC_PASSWORD }}" | vncpasswd -f > ~/.vnc/passwd
+          chmod 600 ~/.vnc/passwd
+
+          # بدء إعدادات VNC
           vncserver :1
           vncserver -kill :1
-          mkdir -p ~/.vnc
+
           echo "#!/bin/bash
-          xrdb $HOME/.Xresources
+          xrdb \$HOME/.Xresources
           startxfce4 &" > ~/.vnc/xstartup
           chmod +x ~/.vnc/xstartup
+
           vncserver :1 -geometry 1280x720 -depth 24
 
       - name: Setup noVNC Server
