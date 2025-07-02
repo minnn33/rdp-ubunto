@@ -12,9 +12,9 @@ jobs:
           sudo apt update
           sudo apt install xfce4 xfce4-goodies tightvncserver git wget python3 -y
 
-          # إعداد كلمة السر
+          # إعداد كلمة السر (ثابتة هنا - أو استبدل بـ secret)
           mkdir -p ~/.vnc
-          echo "${{ secrets.VNC_PASSWORD }}" | vncpasswd -f > ~/.vnc/passwd
+          echo "12345678" | vncpasswd -f > ~/.vnc/passwd
           chmod 600 ~/.vnc/passwd
 
           # تشغيل VNC
@@ -49,3 +49,8 @@ jobs:
 
           echo "📄 سجل noVNC:"
           tail -n 20 novnc.log || echo "لا يوجد سجل"
+
+      - name: Prevent session from closing (keep alive)
+        run: |
+          echo "🟢 الجلسة شغالة... اضغط Cancel لإيقافها يدويًا."
+          tail -f /dev/null
